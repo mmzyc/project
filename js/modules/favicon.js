@@ -5,6 +5,6 @@
 (function() {
     const link = document.createElement('link');
     link.rel = 'icon';
-    link.href = 'img/favicon.png';  // 或者 /favicon.ico
+    link.href = '/img/favicon.png';  // 或者 /favicon.ico
     document.head.appendChild(link);
 })();

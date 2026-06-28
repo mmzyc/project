@@ -1,9 +1,13 @@
 /* 鼠标样式 */
 
 html {
-    cursor: url(/img/cursor/liying_ico/Arrow_64x64.ico), auto !important;
+    cursor: url(/img/cursor/liying_ico/Arrow_64x64.ico), auto;
 }
 
 a {
     cursor: url(/img/cursor/liying_ico/Hand_64x64.ico) 0 26, auto !important;
+}
+
+button {
+    cursor: url(/img/cursor/liying_ico/Arrow_64x64.ico), auto !important;
 }

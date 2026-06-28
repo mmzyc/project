@@ -7,7 +7,7 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
         "Helvetica Neue", Arial, sans-serif;
-    background: #f0f2f5;
+    background: #ffffff;
     padding: 40px 20px;
     display: flex;
     justify-content: center;
@@ -36,14 +36,28 @@ body {
     margin-top: 6px;
 }
 
-/* 网格（即界面样式） */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
-    gap: 48px;
+/* ===== 分类区块 ===== */
+.category-section {
+    margin-bottom: 48px;
 }
 
-/* 卡片 */
+.category-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 16px;
+    padding-left: 14px;
+    border-left: 4px solid #6bd0ff;
+}
+
+/* ===== 卡片网格 ===== */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+    gap: 24px;
+}
+
+/* ===== 卡片 ===== */
 .card {
     background: #ffffff;
     border-radius: 18px;
@@ -100,6 +114,19 @@ body {
     text-align: right;
 }
 
+/* .tags {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+} */
+
+.tag + .tag {
+    margin-left: 8px;
+}
+
 /* 空状态 */
 .empty-state {
     grid-column: 1 / -1;
@@ -114,10 +141,17 @@ body {
 }
 
 /* 响应式 */
-@media (max-width: 480px) {
-    .grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+@media (max-width: 768px) {
+    .card-grid {
+        grid-template-columns: repeat(2, 1fr);
         gap: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .card-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
     }
     .card .info {
         padding: 12px 14px 14px;

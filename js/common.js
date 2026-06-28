@@ -6,7 +6,7 @@
 (function() {
     // ---------- CSS 文件列表 ----------
     const styles = [
-        'css/cursor.css',
+        '/css/cursor.css',
         // 以后新增的 CSS 在这里加一行
     ];
 
@@ -16,8 +16,8 @@
         // 'https://cdn.jsdelivr.net/npm/xxx@1.0.0/dist/xxx.min.js',
         
         // 自己的模块
-        'js/modules/MouseEffects.js',
-        'js/modules/favicon.js',
+        '/js/modules/MouseEffects.js',
+        '/js/modules/favicon.js',
         // 以后新增的 JS，模块 在这里加一行
     ];
 

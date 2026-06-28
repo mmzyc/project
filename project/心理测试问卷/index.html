@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>心理测试问卷</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- 玩前须知弹窗 -->
+    <div class="notice-modal" id="noticeModal">
+        <div class="notice-title">⚠️ 玩前须知</div>
+        <div class="notice-content">
+            本问卷仅供娱乐自测
+            <!-- 包含少量微恐/病娇元素<br> -->请根据真实所感所想作答
+            如有不适请随时退出
+        </div>
+        <button class="notice-btn" id="noticeBtn">我知道了</button>
+    </div>
+
+    <!-- 问卷主体 -->
+    <div class="box" id="mainBox">
+        <div class="title">心理自测</div>
+        <div class="progress" id="progress">第 1 题 / 共 12 题</div>
+        <div class="question" id="question"></div>
+        <div class="options" id="options"></div>
+        <div class="btn-group">
+            <button class="btn prev-btn" id="prevBtn">上一题</button>
+            <button class="btn next-btn" id="nextBtn">下一题</button>
+        </div>
+    </div>
+
+    <!-- 结局日记页面 -->
+    <div class="diary-wrap" id="diaryWrap">
+        <div class="diary-page1" id="diaryPage1">
+            <div class="diary-date">第 1 页</div>
+            <div class="diary-content">
+                你终于做到了这里<br>
+                每一道题都是一面镜子<br>
+                照出你心底最真实的模样<br>
+                <span style="color:red;">你……还清醒吗？</span>
+            </div>
+            <div class="page-next" id="toPage2">→</div>
+        </div>
+        <div class="diary-page2" id="diaryPage2">
+            <div class="diary-date">第 2 页</div>
+            <div class="diary-content">
+                那些你以为藏得很好的情绪<br>
+                其实一直都在<br>
+                在夜深人静的时候<br>
+                在独处的时候<br>
+                <span style="color:red;">悄悄爬出来</span>
+            </div>
+            <div class="page-prev" id="toPage1">←</div>
+            <div class="page-next" id="toPage3">→</div>
+        </div>
+        <div class="diary-page3" id="diaryPage3">
+            <div class="diary-date">第 3 页</div>
+            <div class="diary-content">
+                你愿意承认吗<br>
+                那些黑暗的、疯狂的、不为人知的<br>
+                也是你的一部分<br>
+                <span style="color:red; font-size:22px; font-weight:bold;">接受自己吧</span>
+            </div>
+            <div class="page-prev" id="toPage2Back">←</div>
+            <div class="page-next" id="toPage4">→</div>
+        </div>
+        <div class="diary-page4" id="diaryPage4">
+            <div class="diary-content">
+                <div style="color:#999;">你已完成了全部测试</div>
+                <div style="color:#666;margin:15px 0;">无论结果如何</div>
+                <div style="color:#333;margin:15px 0;font-weight:bold;">你都是独一无二的</div>
+                <button class="start-btn" id="agreeBtn">重新测试</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bgm" src="bgm.flac" loop preload="auto"></audio>
+
+    <script src="js/script.js"></script>
+    <!-- 特效文件 -->
+    <script src="js/effects.js"></script>
+    <script src="/js/common.js"></script>
+</body>
+</html>
