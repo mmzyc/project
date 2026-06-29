@@ -21,28 +21,20 @@ jobs:
       - name: 复制并修改路径
         run: |
           mkdir -p build
+          
+          # 复制时排除 build 目录，防止循环复制
           rsync -av --exclude='build' --exclude='.git' . build/
+          
           cd build
           find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) | while read -r file; do
-            # 处理双引号: "css/xxx" → "/project/css/xxx"
-            sed -i 's|"\(css/\)|"/project/\1|g' "$file"
-            sed -i 's|"\(js/\)|"/project/\1|g' "$file"
-            sed -i 's|"\(img/\)|"/project/\1|g' "$file"
-            sed -i 's|"\(assets/\)|"/project/\1|g' "$file"
-            sed -i 's|"\(static/\)|"/project/\1|g' "$file"
-            sed -i 's|"\(fonts/\)|"/project/\1|g' "$file"
-            sed -i 's|"\(media/\)|"/project/\1|g' "$file"
-            sed -i 's|"\(modules/\)|"/project/\1|g' "$file"
-
-            # 处理单引号: 'css/xxx' → '/project/css/xxx'
-            sed -i "s|'\(css/\)|'/project/\1|g" "$file"
-            sed -i "s|'\(js/\)|'/project/\1|g" "$file"
-            sed -i "s|'\(img/\)|'/project/\1|g" "$file"
-            sed -i "s|'\(assets/\)|'/project/\1|g" "$file"
-            sed -i "s|'\(static/\)|'/project/\1|g" "$file"
-            sed -i "s|'\(fonts/\)|'/project/\1|g" "$file"
-            sed -i "s|'\(media/\)|'/project/\1|g" "$file"
-            sed -i "s|'\(modules/\)|'/project/\1|g" "$file"
+            sed -i 's|["'\'']/\(css/\)|"/project/\1|g' "$file"
+            sed -i 's|["'\'']/\(js/\)|"/project/\1|g' "$file"
+            sed -i 's|["'\'']/\(img/\)|"/project/\1|g' "$file"
+            sed -i 's|["'\'']/\(assets/\)|"/project/\1|g' "$file"
+            sed -i 's|["'\'']/\(static/\)|"/project/\1|g' "$file"
+            sed -i 's|["'\'']/\(fonts/\)|"/project/\1|g' "$file"
+            sed -i 's|["'\'']/\(media/\)|"/project/\1|g' "$file"
+            sed -i 's|["'\'']/\(modules/\)|"/project/\1|g' "$file"
           done
           echo "构建完成"
 
