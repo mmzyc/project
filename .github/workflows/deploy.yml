@@ -1,29 +1,29 @@
-name: Deploy to GitHub Pages
+name: Deploy dev → main
 
 on:
   push:
-    branches: [main]
+    branches: [dev]
   workflow_dispatch:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout dev
         uses: actions/checkout@v4
+        with:
+          ref: dev
 
-      - name: 只修改 / 开头的路径
+      - name: 复制并修改路径
         run: |
+          mkdir -p build
+          cp -r . build/
+          
+          cd build
           find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) | while read -r file; do
             sed -i 's|["'\'']/\(css/\)|"/project/\1|g' "$file"
             sed -i 's|["'\'']/\(js/\)|"/project/\1|g' "$file"
@@ -34,29 +34,11 @@ jobs:
             sed -i 's|["'\'']/\(media/\)|"/project/\1|g' "$file"
             sed -i 's|["'\'']/\(modules/\)|"/project/\1|g' "$file"
           done
-          echo "只修改 / 开头的路径完成"
 
-      - name: Commit 修改
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: 部署到 main 分支
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          commit_message: "chore: update absolute asset paths"
-          file_pattern: "*.html *.css *.js"
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          publish_branch: main
+          force_orphan: true
