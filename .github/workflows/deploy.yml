@@ -21,7 +21,9 @@ jobs:
       - name: 复制并修改路径
         run: |
           mkdir -p build
-          cp -r . build/
+          
+          # 复制时排除 build 目录，防止循环复制
+          rsync -av --exclude='build' --exclude='.git' . build/
           
           cd build
           find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) | while read -r file; do
@@ -34,6 +36,7 @@ jobs:
             sed -i 's|["'\'']/\(media/\)|"/project/\1|g' "$file"
             sed -i 's|["'\'']/\(modules/\)|"/project/\1|g' "$file"
           done
+          echo "构建完成"
 
       - name: 部署到 main 分支
         uses: peaceiris/actions-gh-pages@v4
