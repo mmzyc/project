@@ -10,49 +10,90 @@ def fix_paths(file_path):
     
     original = content
     
-    # ---- 1. HTML 文件：href/src ----
+    # ---- HTML ----
     if file_path.endswith('.html'):
-        content = re.sub(r'(href|src)="(?!\.\./)(css|js|img)/', 
-                         f'\\1="/{REPO_NAME}/\\2/', content)
-        content = re.sub(r'(href|src)="\.\./(css|js|img)/', 
-                         f'\\1="/{REPO_NAME}/\\2/', content)
+        # href="css/xxx" → href="/project/css/xxx"
+        # src="js/xxx" → src="/project/js/xxx"
+        content = re.sub(
+            r'(href|src)=["\'](?!https?://|/|\.\./|#)(css|js|img|assets|static|fonts|media|uploads|files|data|json|lib|vendor|plugins|js/modules)/([^"\']*)["\']',
+            lambda m: f'{m.group(1)}="/{REPO_NAME}/{m.group(2)}/{m.group(3)}"',
+            content
+        )
+        # href="../css/xxx" → href="/project/css/xxx"
+        content = re.sub(
+            r'(href|src)=["\']\.\./(css|js|img|assets|static|fonts|media|uploads|files|data|json|lib|vendor|plugins|js/modules)/([^"\']*)["\']',
+            lambda m: f'{m.group(1)}="/{REPO_NAME}/{m.group(2)}/{m.group(3)}"',
+            content
+        )
+        # ./css/xxx → /project/css/xxx
+        content = re.sub(
+            r'(href|src)=["\']\./(css|js|img|assets|static|fonts|media|uploads|files|data|json|lib|vendor|plugins|js/modules)/([^"\']*)["\']',
+            lambda m: f'{m.group(1)}="/{REPO_NAME}/{m.group(2)}/{m.group(3)}"',
+            content
+        )
     
-    # ---- 2. CSS 文件：url() ----
+    # ---- CSS ----
     elif file_path.endswith('.css'):
-        content = re.sub(r'url\(["\']?\.\./img/', 
-                         f'url("/{REPO_NAME}/img/', content)
-        content = re.sub(r'url\(["\']?(?!\.\./|/)(img/)([^"\'\)]+)\)', 
-                         f'url("/{REPO_NAME}/\\1\\2")', content)
+        # url(img/xxx) → url(/project/img/xxx)
+        content = re.sub(
+            r'url\(["\']?(?!https?://|/)(img|assets|static|fonts|media|uploads|files|data|json|lib|vendor|plugins)(/[^"\'\)]*)["\']?\)',
+            lambda m: f'url("/{REPO_NAME}/{m.group(1)}{m.group(2)}")',
+            content
+        )
+        # url(../img/xxx) → url(/project/img/xxx)
+        content = re.sub(
+            r'url\(["\']?\.\./(img|assets|static|fonts|media|uploads|files|data|json|lib|vendor|plugins)(/[^"\'\)]*)["\']?\)',
+            lambda m: f'url("/{REPO_NAME}/{m.group(1)}{m.group(2)}")',
+            content
+        )
+        # url("./img/xxx") → url("/project/img/xxx")
+        content = re.sub(
+            r'url\(["\']?\./(img|assets|static|fonts|media|uploads|files|data|json|lib|vendor|plugins)(/[^"\'\)]*)["\']?\)',
+            lambda m: f'url("/{REPO_NAME}/{m.group(1)}{m.group(2)}")',
+            content
+        )
     
-    # ---- 3. JS 文件：字符串里的路径 ----
+    # ---- JS ----
     elif file_path.endswith('.js'):
-        content = re.sub(r'([\'"])(img/)([^\'"]+)([\'"])', 
-                         f'\\1/{REPO_NAME}/\\2\\3\\4', content)
-        content = re.sub(r'([\'"])(\.\./img/)([^\'"]+)([\'"])', 
-                         f'\\1/{REPO_NAME}/img/\\3\\4', content)
-        content = re.sub(r'([\'"])(css/)([^\'"]+)([\'"])', 
-                         f'\\1/{REPO_NAME}/\\2\\3\\4', content)
-        content = re.sub(r'([\'"])(\.\./css/)([^\'"]+)([\'"])', 
-                         f'\\1/{REPO_NAME}/css/\\3\\4', content)
+        # 'img/xxx' → '/project/img/xxx'
+        content = re.sub(
+            r'([\'"])(img|assets|static|fonts|media|uploads|files|data|json|lib|vendor|plugins)/([^\'"]+)([\'"])',
+            lambda m: f'{m.group(1)}/{REPO_NAME}/{m.group(2)}/{m.group(3)}{m.group(4)}',
+            content
+        )
+        # '../img/xxx' → '/project/img/xxx'
+        content = re.sub(
+            r'([\'"])\.\./(img|assets|static|fonts|media|uploads|files|data|json|lib|vendor|plugins)/([^\'"]+)([\'"])',
+            lambda m: f'{m.group(1)}/{REPO_NAME}/{m.group(2)}/{m.group(3)}{m.group(4)}',
+            content
+        )
+        # './img/xxx' → '/project/img/xxx'
+        content = re.sub(
+            r'([\'"])\./(img|assets|static|fonts|media|uploads|files|data|json|lib|vendor|plugins)/([^\'"]+)([\'"])',
+            lambda m: f'{m.group(1)}/{REPO_NAME}/{m.group(2)}/{m.group(3)}{m.group(4)}',
+            content
+        )
     
     if content != original:
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
         print(f'✅ 已修复: {file_path}')
+        return True
+    else:
+        print(f'⏭️ 跳过: {file_path} (无需修改)')
+        return False
 
-
-# ==================== 扫描所有文件 ====================
-
+# 只扫描 .html .css .js
 all_files = glob.glob('**/*.*', recursive=True)
 
-# 🔍 调试：打印扫描到的所有文件
-print(f"🔍 总共扫描到 {len(all_files)} 个文件")
-for f in all_files:
-    print(f"  - {f}")
-
-# 筛选并修复
+total = 0
+fixed = 0
 for file_path in all_files:
-    if '.github' in file_path:
+    if '.github' in file_path or 'node_modules' in file_path:
         continue
     if file_path.endswith(('.html', '.css', '.js')):
-        fix_paths(file_path)
+        total += 1
+        if fix_paths(file_path):
+            fixed += 1
+
+print(f'\n📊 总共处理 {total} 个文件，其中 {fixed} 个被修改')
