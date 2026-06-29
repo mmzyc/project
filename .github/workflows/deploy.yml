@@ -25,17 +25,10 @@ jobs:
 
           cd build
 
-          # 修改路径：把引号内的路径改成 /project/xxx
-          # 处理 html/css/js 文件
-          find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) -exec sed -i \
-            -e 's|\(["'\'']\)\(css/\)|\1/project/\2|g' \
-            -e 's|\(["'\'']\)\(js/\)|\1/project/\2|g' \
-            -e 's|\(["'\'']\)\(img/\)|\1/project/\2|g' \
-            -e 's|\(["'\'']\)\(assets/\)|\1/project/\2|g' \
-            -e 's|\(["'\'']\)\(static/\)|\1/project/\2|g' \
-            -e 's|\(["'\'']\)\(fonts/\)|\1/project/\2|g' \
-            -e 's|\(["'\'']\)\(media/\)|\1/project/\2|g' \
-            -e 's|\(["'\'']\)\(uploads/\)|\1/project/\2|g' \
+          # 用 sed -E 一次性处理所有情况
+          find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) -exec sed -i -E \
+            -e 's|(["'\''])(\.\./)?(css|js|img|assets|static|fonts|media|uploads|files|data|json|lib|vendor|plugins|js/modules)/|\1/project/\3/|g' \
+            -e 's|(["'\''])(\./)?(css|js|img|assets|static|fonts|media|uploads|files|data|json|lib|vendor|plugins|js/modules)/|\1/project/\3/|g' \
             {} +
 
           echo "路径替换完成"
