@@ -22,15 +22,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 修改资源路径
+      - name: 修改资源路径（处理 /css 和 css 开头）
         run: |
-          find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) -print0 | \
-          xargs -0 sed -i -E 's|(["'\''])/?(css|js|img|assets|static|fonts|media|uploads|files|data|json|lib|vendor|plugins)(/[^"'\'' ]*)|\1/project/\2\3|g'
+          find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) | while read -r file; do
+            sed -i 's|["'\'']/\{0,1\}\(css\|js\|img\|assets\|static\|fonts\|media\|uploads\|files\|data\|json\|lib\|vendor\|plugins\)/|/project/\1/|g' "$file"
+          done
+          echo "路径修改完成"
 
       - name: Commit 修改
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: update asset paths for pages deployment"
+          commit_message: "chore: update asset paths for github pages"
           file_pattern: "*.html *.css *.js"
 
       - name: Setup Pages
