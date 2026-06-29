@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -6,9 +6,8 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: write   # 必须
   pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -17,16 +16,23 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Fix all paths
+      - name: 修改文件路径（直接在源文件上改）
         run: |
-          # 查找所有 HTML/CSS/JS 文件，把路径改成 /project/xxx
           find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) \
-            -not -path "./.github/*" \
-            -exec sed -i 's|\(["'\'']\)\(\.\.\/\)\?\(css\|js\|img\|assets\|static\|fonts\|media\|uploads\|files\|data\|json\|lib\|vendor\|plugins\|js/modules\)/|\1/project/\3/|g' {} \;
+            -exec sed -i 's|\(["'\'']\)\(\.\.\/\)\?\(css\|js\|img\|assets\|static\|fonts\|media\|uploads\|files\|data\|json\|lib\|vendor\|plugins\|js/modules\)/|\1/project/\3/|g' {} +
+
+      - name: Commit 修改
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update asset paths for pages"
+          file_pattern: "*.html *.css *.js"
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -34,7 +40,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: '.'     # 直接部署当前目录
 
   deploy:
     environment:
