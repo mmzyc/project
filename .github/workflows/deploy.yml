@@ -2,7 +2,7 @@ name: Build and Deploy
 
 on:
   push:
-    branches: [main]        # ← 确认你的默认分支是 main 还是 master
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -21,14 +21,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Fix paths for GitHub Pages
+      - name: Fix all paths
         run: |
-          python .github/fix_paths.py   # ← 确认脚本路径正确
+          # 查找所有 HTML/CSS/JS 文件，把路径改成 /project/xxx
+          find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) \
+            -not -path "./.github/*" \
+            -exec sed -i 's|\(["'\'']\)\(\.\.\/\)\?\(css\|js\|img\|assets\|static\|fonts\|media\|uploads\|files\|data\|json\|lib\|vendor\|plugins\|js/modules\)/|\1/project/\3/|g' {} \;
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
