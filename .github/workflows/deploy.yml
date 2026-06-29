@@ -22,10 +22,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 修改资源路径（处理 /css 和 css 开头）
+      - name: 修改资源路径（适配你的项目）
         run: |
           find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) | while read -r file; do
-            sed -i 's|["'\'']/\{0,1\}\(css\|js\|img\|assets\|static\|fonts\|media\|uploads\|files\|data\|json\|lib\|vendor\|plugins\)/|/project/\1/|g' "$file"
+            # 处理 js/ 和 /js/
+            sed -i 's|["'\'']\(/\{0,1\}js/\)|"/project/js/|g' "$file"
+            # 处理 css/ 和 /css/
+            sed -i 's|["'\'']\(/\{0,1\}css/\)|"/project/css/|g' "$file"
+            # 处理其他常见目录
+            sed -i 's|["'\'']\(/\{0,1\}img/\)|"/project/img/|g' "$file"
+            sed -i 's|["'\'']\(/\{0,1\}assets/\)|"/project/assets/|g' "$file"
+            sed -i 's|["'\'']\(/\{0,1\}static/\)|"/project/static/|g' "$file"
+            sed -i 's|["'\'']\(/\{0,1\}modules/\)|"/project/modules/|g' "$file"
           done
           echo "路径修改完成"
 
