@@ -153,14 +153,15 @@ function renderQuestion() {
                 return;
             }
             // 第五题：选择"雨天"触发效果
-            if (current === 4 && idx === 1 && !triggeredEffects[5]) {
-                triggeredEffects[5] = true;
+            if (current === 4 && idx === 1 && !triggeredEffects[4]) {
+                triggeredEffects[4] = true;
 
                 const optEl = div;  // 当前点击的选项元素
                 const originalText = optEl.innerText;
                 const originalColor = optEl.style.color
-                optEl.innerText = "我也喜欢^_^";
-                optEl.style.color = "gray";
+                // optEl.innerText = "我也喜欢^_^";
+                // optEl.style.color = "gray";
+                optEl.insertAdjacentHTML('beforeend', '<span style="color: gray; font-size: clamp(13px, 2.8vw, 15px); position: absolute; right: 14px; height: 25%">我也喜欢^_^</span>');
 
                 // 2秒后恢复
                 setTimeout(() => {
@@ -491,7 +492,7 @@ function openStartModal() {
     mainBox.style.display = "none";
 
     const tipTexts = [
-        "<b style='font-size:12px;'>欢迎来到心理自测<br>请根据真实感受选择<br>题目含少量特殊互动<br>准备好了就开始吧</br>",
+        "<b style='font-size:14px;'>欢迎来到心理自测<br>请根据真实感受选择<br>题目含少量特殊互动<br>准备好了就开始吧</br>",
         // "<b style='font-size:16px;'>请根据真实感受选择</b>",
         // "<b style='font-size:16px;'>题目含少量特殊互动</b>",
         // "<b style='font-size:16px;'>准备好了就开始吧</b>"
