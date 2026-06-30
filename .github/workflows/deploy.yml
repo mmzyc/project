@@ -27,14 +27,15 @@ jobs:
           
           cd build
           find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) | while read -r file; do
-            sed -i 's|["'\'']/\(css/\)|"/project/\1|g' "$file"
-            sed -i 's|["'\'']/\(js/\)|"/project/\1|g' "$file"
-            sed -i 's|["'\'']/\(img/\)|"/project/\1|g' "$file"
-            sed -i 's|["'\'']/\(assets/\)|"/project/\1|g' "$file"
-            sed -i 's|["'\'']/\(static/\)|"/project/\1|g' "$file"
-            sed -i 's|["'\'']/\(fonts/\)|"/project/\1|g' "$file"
-            sed -i 's|["'\'']/\(media/\)|"/project/\1|g' "$file"
-            sed -i 's|["'\'']/\(modules/\)|"/project/\1|g' "$file"
+              # 捕获引号，保留原样，只在 / 前加 /project
+              sed -i 's|\(["'\'']\)/\(css/\)|\1/project/\2|g' "$file"
+              sed -i 's|\(["'\'']\)/\(js/\)|\1/project/\2|g' "$file"
+              sed -i 's|\(["'\'']\)/\(img/\)|\1/project/\2|g' "$file"
+              sed -i 's|\(["'\'']\)/\(assets/\)|\1/project/\2|g' "$file"
+              sed -i 's|\(["'\'']\)/\(static/\)|\1/project/\2|g' "$file"
+              sed -i 's|\(["'\'']\)/\(fonts/\)|\1/project/\2|g' "$file"
+              sed -i 's|\(["'\'']\)/\(media/\)|\1/project/\2|g' "$file"
+              sed -i 's|\(["'\'']\)/\(modules/\)|\1/project/\2|g' "$file"
           done
           echo "构建完成"
 
