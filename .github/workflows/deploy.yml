@@ -27,11 +27,37 @@ jobs:
           
           cd build
           find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) | while read -r file; do
-            # 处理引号开头的路径: "/css/ → "/project/css/
-            sed -i -E 's|(["\'\''])/(css|js|img|assets|static|fonts|media|modules)/|\1/project/\2/|g' "$file"
+            # ---- 原有的引号路径处理 ----
+            sed -i 's|\(["'\'']\)/\(css/\)|\1/project/\2|g' "$file"
+            sed -i 's|\(["'\'']\)/\(js/\)|\1/project/\2|g' "$file"
+            sed -i 's|\(["'\'']\)/\(img/\)|\1/project/\2|g' "$file"
+            sed -i 's|\(["'\'']\)/\(assets/\)|\1/project/\2|g' "$file"
+            sed -i 's|\(["'\'']\)/\(static/\)|\1/project/\2|g' "$file"
+            sed -i 's|\(["'\'']\)/\(fonts/\)|\1/project/\2|g' "$file"
+            sed -i 's|\(["'\'']\)/\(media/\)|\1/project/\2|g' "$file"
+            sed -i 's|\(["'\'']\)/\(modules/\)|\1/project/\2|g' "$file"
 
-            # 处理 CSS 的 url(): url(/img/ → url(/project/img/
-            sed -i -E 's|url\((["\'\'']?)/(img|assets|static|fonts|media)/|url(\1/project/\2/|g' "$file"
+            # ---- 新增：处理 CSS 的 url() ----
+            # url(/img/xxx) → url(/project/img/xxx)
+            sed -i 's|url(\(/\)\(img/\)|url(/project/\2|g' "$file"
+            sed -i 's|url(\(/\)\(assets/\)|url(/project/\2|g' "$file"
+            sed -i 's|url(\(/\)\(static/\)|url(/project/\2|g' "$file"
+            sed -i 's|url(\(/\)\(fonts/\)|url(/project/\2|g' "$file"
+            sed -i 's|url(\(/\)\(media/\)|url(/project/\2|g' "$file"
+
+            # url("../img/xxx") → url("/project/img/xxx")
+            sed -i 's|url("\(/\)\(img/\)|url("/project/\2|g' "$file"
+            sed -i 's|url("\(/\)\(assets/\)|url("/project/\2|g' "$file"
+            sed -i 's|url("\(/\)\(static/\)|url("/project/\2|g' "$file"
+            sed -i 's|url("\(/\)\(fonts/\)|url("/project/\2|g' "$file"
+            sed -i 's|url("\(/\)\(media/\)|url("/project/\2|g' "$file"
+
+            # url('../img/xxx') → url('/project/img/xxx')
+            sed -i "s|url('\(/\)\(img/\)|url('/project/\2|g" "$file"
+            sed -i "s|url('\(/\)\(assets/\)|url('/project/\2|g" "$file"
+            sed -i "s|url('\(/\)\(static/\)|url('/project/\2|g" "$file"
+            sed -i "s|url('\(/\)\(fonts/\)|url('/project/\2|g" "$file"
+            sed -i "s|url('\(/\)\(media/\)|url('/project/\2|g" "$file"
           done
           echo "构建完成"
 
