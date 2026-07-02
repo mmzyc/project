@@ -129,7 +129,7 @@ body {
     padding: 14px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    cursor: pointer;
+    /* cursor: pointer; */
     font-size: clamp(16px, 2.8vw, 18px);
     background: #fff;
     transition: all 0.2s;
