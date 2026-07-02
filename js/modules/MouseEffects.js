@@ -7,7 +7,7 @@ canvas.style.cssText = `
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 9999;
+    z-index: 2147483647;
     pointer-events: none;
 `;
 // 添加到页面
@@ -21,7 +21,7 @@ const colors = ['#ff4d4f', '#40a9ff', '#ffc53d', '#73d13d', '#9254de', '#ff85c0'
 const text = document.createElement('span');
 text.innerText = texts[Math.floor(Math.random() * texts.length)];
 text.style.position = 'absolute';
-text.style.zIndex = 9999;
+text.style.zIndex = 2147483647;
 text.style.left = (e.pageX-25) + 'px';
 text.style.top = (e.pageY-25) + 'px';
 text.style.fontWeight = 'bold';
@@ -78,11 +78,12 @@ function drawTrail() {
         const p2 = points[i + 1];
 
         // 根据位置和索引计算颜色（彩虹渐变）
-        const pinkHue = 320;
+        // 320 粉色 195 浅蓝色
+        const Hue = 195;
         const alpha = (i / points.length) * 0.8 + 0.2;  // 透明度渐变
         const lineWidth = 2 + 4 * (i / points.length);
 
-        ctx.strokeStyle = `hsla(${pinkHue}, 100%, 70%, ${alpha})`;
+        ctx.strokeStyle = `hsla(${Hue}, 100%, 70%, ${alpha})`;
         ctx.lineWidth = lineWidth;
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
