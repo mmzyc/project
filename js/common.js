@@ -18,6 +18,7 @@
         // 自己的模块
         '/project/js/modules/MouseEffects.js',
         '/project/js/modules/favicon.js',
+        '/project/js/modules/author.js',
         // 以后新增的 JS，模块 在这里加一行
     ];
 

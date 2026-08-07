@@ -1,0 +1,19 @@
+/* 作者信息 */
+.author {
+    position: fixed;
+    right: 100px;
+    bottom: 20px;
+    /* z-index: 2147483647; */
+}
+.author a {
+    text-underline-offset: 7px;
+    color: gray;
+}
+.author-text {
+    line-height: 0.8;
+}
+.author-text * {
+    font-family: serif;
+    font-size: medium;
+    color: black;
+}
