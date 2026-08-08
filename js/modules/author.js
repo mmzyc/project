@@ -3,7 +3,7 @@
 (function() {
     // ---------- ① 路径过滤：仅非主页生效 ----------
     const path = window.location.pathname;
-    if (path === '/' || path === '/index.html' || path === '') {
+    if (path === '/' || path === '/index.html' || path === '' || path === '/project/' || path === '/project/index.html') {
         // 主页直接返回，不加载 CSS，不注入 HTML
         return;
     }
