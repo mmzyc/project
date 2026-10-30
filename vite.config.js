@@ -26,7 +26,15 @@ function injectSharedLayer() {
         )
         if (!bootChunk) return []
         const src = base + bootChunk.fileName
-        return [{ tag: 'script', attrs: { type: 'module', src }, injectTo: 'head' }]
+        const tags = [{ tag: 'script', attrs: { type: 'module', src }, injectTo: 'head' }]
+        // ★ boot 是插件手动注入的入口，Vite 不会自动链接它的 CSS。
+        //   必须把它的样式表一并注入，否则 CustomMouse/AuthorBadge 的样式
+        //   在生产环境缺失（画布失去 position:fixed 会内联撑开页面，主页错位）
+        const cssFiles = bootChunk.viteMetadata?.importedCss || []
+        for (const file of cssFiles) {
+          tags.push({ tag: 'link', attrs: { rel: 'stylesheet', href: base + file }, injectTo: 'head' })
+        }
+        return tags
       },
     },
   }

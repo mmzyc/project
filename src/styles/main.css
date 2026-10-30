@@ -19,6 +19,11 @@ body {
     width: 100%;
 }
 
+/* Vue 挂载点：作为 body 的 flex 子元素需要撑满，.container 的 width:100% 才有基准 */
+#app {
+    width: 100%;
+}
+
 .header {
     margin-bottom: 36px;
 }
