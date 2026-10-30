@@ -1,71 +1,52 @@
-name: Deploy dev → main
+name: Deploy（构建 + 发布）
 
 on:
   push:
-    branches: [dev]
+    branches: [main]
   workflow_dispatch:
 
+# 官方 GitHub Pages 部署流程所需的权限
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只跑一个部署，新推送会取消旧的
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout dev
+      - name: 拉取代码
         uses: actions/checkout@v4
+
+      - name: 配置 Node.js
+        uses: actions/setup-node@v4
         with:
-          ref: dev
+          node-version: 22
+          cache: npm
 
-      - name: 复制并修改路径
-        run: |
-          mkdir -p build
-          
-          # 复制时排除 build 目录，防止循环复制
-          rsync -av --exclude='build' --exclude='.git' . build/
-          
-          cd build
-          find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) | while read -r file; do
-            # ---- 原有的引号路径处理 ----
-            sed -i 's|\(["'\'']\)/\(css/\)|\1/project/\2|g' "$file"
-            sed -i 's|\(["'\'']\)/\(js/\)|\1/project/\2|g' "$file"
-            sed -i 's|\(["'\'']\)/\(img/\)|\1/project/\2|g' "$file"
-            sed -i 's|\(["'\'']\)/\(assets/\)|\1/project/\2|g' "$file"
-            sed -i 's|\(["'\'']\)/\(static/\)|\1/project/\2|g' "$file"
-            sed -i 's|\(["'\'']\)/\(fonts/\)|\1/project/\2|g' "$file"
-            sed -i 's|\(["'\'']\)/\(media/\)|\1/project/\2|g' "$file"
-            sed -i 's|\(["'\'']\)/\(modules/\)|\1/project/\2|g' "$file"
+      - name: 安装依赖
+        run: npm ci
 
-            # ---- 新增：处理 CSS 的 url() ----
-            # url(/img/xxx) → url(/project/img/xxx)
-            sed -i 's|url(\(/\)\(img/\)|url(/project/\2|g' "$file"
-            sed -i 's|url(\(/\)\(assets/\)|url(/project/\2|g' "$file"
-            sed -i 's|url(\(/\)\(static/\)|url(/project/\2|g' "$file"
-            sed -i 's|url(\(/\)\(fonts/\)|url(/project/\2|g' "$file"
-            sed -i 's|url(\(/\)\(media/\)|url(/project/\2|g' "$file"
+      - name: 构建（Vite：base 自动处理 /project/ 前缀）
+        run: npm run build
 
-            # url("../img/xxx") → url("/project/img/xxx")
-            sed -i 's|url("\(/\)\(img/\)|url("/project/\2|g' "$file"
-            sed -i 's|url("\(/\)\(assets/\)|url("/project/\2|g' "$file"
-            sed -i 's|url("\(/\)\(static/\)|url("/project/\2|g' "$file"
-            sed -i 's|url("\(/\)\(fonts/\)|url("/project/\2|g' "$file"
-            sed -i 's|url("\(/\)\(media/\)|url("/project/\2|g' "$file"
-
-            # url('../img/xxx') → url('/project/img/xxx')
-            sed -i "s|url('\(/\)\(img/\)|url('/project/\2|g" "$file"
-            sed -i "s|url('\(/\)\(assets/\)|url('/project/\2|g" "$file"
-            sed -i "s|url('\(/\)\(static/\)|url('/project/\2|g" "$file"
-            sed -i "s|url('\(/\)\(fonts/\)|url('/project/\2|g" "$file"
-            sed -i "s|url('\(/\)\(media/\)|url('/project/\2|g" "$file"
-          done
-          echo "构建完成"
-
-      - name: 部署到 main 分支
-        uses: peaceiris/actions-gh-pages@v4
+      - name: 上传构建产物
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
-          publish_branch: main
-          # force_orphan: true
-          keep_files: true
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 发布到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
