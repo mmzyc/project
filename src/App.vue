@@ -26,24 +26,36 @@ pages.forEach(p => {
         <div class="grid" v-if="pages.length === 0">
             <div class="empty-state">
                 <span class="big-icon">📂</span>
-                <p>还没有添加页面<br>在 <code>src/data/pages.js</code> 里加几条数据吧</p>
+                <p>还没有添加页面<br>在 <code>pages</code> 数组里加几条数据吧</p>
             </div>
         </div>
 
-        <div class="category-section" v-for="(items, category) in groups" :key="category">
-            <h2 class="category-title">{{ category }}</h2>
-            <div class="card-grid">
-                <a v-for="p in items" :key="p.url" :href="p.url" class="card" target="_blank">
-                    <img class="thumb" :src="p.img" :alt="p.title" loading="lazy" />
-                    <div class="info">
-                        <div class="title">{{ p.title }}</div>
-                        <div class="desc">{{ p.desc || '' }}</div>
-                        <div class="tag" v-if="p.tags">
-                            <span class="tag" v-for="t in p.tags" :key="t"># {{ t }}</span>
+        <!-- 包装层：与旧版 #cardGrid 一致（保持外边距折叠行为，页面底部留白不变） -->
+        <div class="grid">
+            <div class="category-section" v-for="(items, category) in groups" :key="category">
+                <h2 class="category-title">{{ category }}</h2>
+                <div class="card-grid">
+                    <a v-for="p in items" :key="p.url" :href="p.url" class="card" target="_blank">
+                        <img class="thumb" :src="p.img" :alt="p.title" loading="lazy" />
+                        <div class="info">
+                            <div class="title">{{ p.title }}</div>
+                            <div class="desc">{{ p.desc || '' }}</div>
+                            <div class="tag" v-if="p.tags">
+                                <span class="tag" v-for="t in p.tags" :key="t"># {{ t }}</span>
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </template>
+
+<!-- 无 scoped：挂载点 #app 用 display:contents 从盒树隐身，
+     让 .container 直接成为 body 的 flex 子元素（与旧版 DOM 等价，
+     保持外边距折叠行为，页面底部留白不变） -->
+<style>
+#app {
+    display: contents;
+}
+</style>
