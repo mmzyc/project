@@ -26,7 +26,7 @@ export const pages = [
         title: "心理测试问卷",
         desc: "我自己做的",
         img: "img/config_img/微信占位封面.png",
-        url: "project/psycheck",
+        url: "project/psycheck/",
         tags: ["趣味", "问卷"],
         category: "我的项目"
     }

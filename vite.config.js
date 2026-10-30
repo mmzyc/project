@@ -19,12 +19,13 @@ function injectSharedLayer() {
         if (!ctx.bundle) {
           return [{ tag: 'script', attrs: { type: 'module', src: base + 'src/boot.js' }, injectTo: 'head' }]
         }
-        // 构建模式：从打包结果里找出 boot 的真实文件名（带 hash），拼上 base 前缀
+        // 构建模式：从打包结果里找出 boot 的真实文件名（带 hash）
+        // base 自带末尾斜杠（如 '/project/'），fileName 不带前导斜杠，直接拼接即可
         const bootChunk = Object.values(ctx.bundle).find(
           c => c.name === 'boot' && c.fileName?.endsWith('.js')
         )
         if (!bootChunk) return []
-        const src = base.replace(/\/$/, '') + '/' + bootChunk.fileName
+        const src = base + bootChunk.fileName
         return [{ tag: 'script', attrs: { type: 'module', src }, injectTo: 'head' }]
       },
     },
